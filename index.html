@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1c1427">
+<meta name="description" content="Un cuento de hadas hecho con cariño para Gaby.">
+<title>El libro de la princesa Gaby</title>
+<style>
+:root{--night:#171020;--plum:#342144;--violet:#74538a;--lav:#e5c8ed;--pink:#f5d8e9;--gold:#f4dda9;--paper:#fff8ed;--ink:#503957}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at 50% 15%,#4b3260,#1c1427 65%,#100c18);color:#fff6fb;font-family:Georgia,'Times New Roman',serif}
+body{overflow-x:hidden}
+button{font:inherit;cursor:pointer}
+#sky{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0}
+.star{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff3c9;box-shadow:0 0 8px #fff3c9;animation:twinkle 3s ease-in-out infinite alternate}
+.petal{position:absolute;top:-30px;width:11px;height:17px;border-radius:90% 0 90% 0;background:linear-gradient(135deg,#f7d7ed,#a77bbd);opacity:.65;animation:fall linear infinite}
+@keyframes twinkle{to{opacity:.18;transform:scale(.5)}}
+@keyframes fall{to{transform:translate(55px,110vh) rotate(480deg);opacity:0}}
+@keyframes float{50%{transform:translateY(-10px)}}
+@keyframes glow{50%{text-shadow:0 0 25px #f5d9ff,0 0 50px #b68bcd}}
+@keyframes pageIn{from{opacity:.35;transform:translateX(28px) rotateY(-5deg)}to{opacity:1;transform:none}}
+@keyframes pageOut{from{opacity:1;transform:none}to{opacity:.35;transform:translateX(-22px) rotateY(4deg)}}
+@keyframes sparkle{0%{opacity:0;transform:scale(.3)}35%{opacity:1;transform:scale(1.5)}100%{opacity:0;transform:scale(2.2)}}
+#entrance{position:fixed;inset:0;z-index:20;display:grid;place-items:center;text-align:center;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#684b7b,#251831 65%,#100c18);transition:opacity 1s,visibility 1s}
+#entrance.hide{opacity:0;visibility:hidden;pointer-events:none}
+.moon{position:absolute;top:8%;right:13%;width:90px;height:90px;border-radius:50%;background:#fff0c9;box-shadow:0 0 40px #f8dfa7,0 0 100px #e4c5f455}
+.castle-door{position:absolute;bottom:-8%;left:50%;transform:translateX(-50%);width:min(76vw,640px);height:70vh;border:9px solid #d8b77e;border-bottom:0;border-radius:48% 48% 0 0;background:radial-gradient(ellipse at 50% 40%,#d7b4e9,#62457b 55%,#2b1a3c);box-shadow:0 0 50px #f4d9a455;overflow:hidden}
+.door{position:absolute;top:0;bottom:0;width:50%;background:linear-gradient(90deg,#362042,#765386,#392344);border:2px solid #d8b77e;transition:transform 1.6s cubic-bezier(.7,0,.2,1)}
+.door:after{content:'✧';position:absolute;top:44%;color:#f5dfa7;font-size:3rem}
+.door.left{left:0;transform-origin:left center}.door.right{right:0;transform-origin:right center}
+.door.left:after{right:18%}.door.right:after{left:18%}
+#entrance.opening .door.left{transform:perspective(900px) rotateY(-110deg)}#entrance.opening .door.right{transform:perspective(900px) rotateY(110deg)}
+.gate-copy{position:relative;z-index:4;width:min(650px,90vw);padding:20px;transform:translateY(-3vh)}
+.crown{font-size:4rem;color:var(--gold);filter:drop-shadow(0 0 16px #f4dca8);animation:float 4s infinite}
+.gate-copy small{letter-spacing:.25em;text-transform:uppercase;color:#e7c9ef;font: .7rem Arial,sans-serif}
+.gate-copy h1{font-weight:normal;font-size:clamp(2.5rem,8vw,5.5rem);line-height:1;margin:18px 0;color:#fff2fa;text-shadow:0 0 25px #e0b5ed}
+.gate-copy h1 em{display:block;color:var(--gold);font-size:.57em;margin-top:12px}
+.gate-copy p{line-height:1.8;color:#ead9ef;max-width:490px;margin:18px auto 25px}
+#enter{border:1px solid #f3dfa9;background:linear-gradient(135deg,#f5e5bf,#d8b6e8);color:#40294c;border-radius:999px;padding:14px 27px;box-shadow:0 0 30px #f2d7ff55;transition:.25s}
+#enter:hover{transform:translateY(-3px);box-shadow:0 0 45px #f2d7ff99}
+#reader{position:relative;z-index:1;min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 14px 34px;opacity:0;transition:opacity 1s}
+#reader.ready{opacity:1}
+.reader-top{width:min(980px,100%);display:flex;justify-content:space-between;align-items:center;gap:12px;margin:0 auto 16px;color:#d9c5e3;font: .68rem Arial,sans-serif;letter-spacing:.13em;text-transform:uppercase}
+.reader-top button,.reader-bottom button{border:1px solid #e5c6ed77;background:#ffffff0b;color:#f8eafa;border-radius:999px;padding:10px 16px;transition:.2s}
+.reader-top button:hover,.reader-bottom button:hover{background:#ffffff20;transform:translateY(-2px)}
+.book-shell{width:min(980px,100%);height:min(74svh,720px);min-height:540px;position:relative;perspective:1800px;filter:drop-shadow(0 24px 45px #08051099)}
+.book-shell:before{content:'';position:absolute;inset:0 0 0 50%;background:linear-gradient(90deg,#bba4b4,#f5e9dc 8%,#e9d9d2 12%,#fff8ed 100%);border-radius:0 13px 13px 0;box-shadow:inset 8px 0 15px #765c6c44}
+.book-shell:after{content:'';position:absolute;inset:0 50% 0 0;background:linear-gradient(270deg,#bba4b4,#f5e9dc 8%,#e9d9d2 12%,#fff8ed 100%);border-radius:13px 0 0 13px;box-shadow:inset -8px 0 15px #765c6c44}
+.book-page{position:absolute;inset:0 0 0 0;width:100%;height:100%;display:none;z-index:3;background:linear-gradient(90deg,#fff8ed 0%,#fffdf6 48%,#f7eddf 50%,#fff9ef 100%);color:var(--ink);padding:clamp(26px,5vw,58px);border:1px solid #ead7bd;border-radius:12px;overflow:hidden;box-shadow:inset 0 0 0 9px #fff8ed,inset 0 0 0 10px #d9bfd4,0 8px 30px #0d0814aa;transform-origin:left center}
+.book-page.active{display:flex;flex-direction:column;align-items:center;justify-content:center;animation:pageIn .55s ease both}
+.book-page.turning{animation:pageOut .28s ease both}
+.book-page:before{content:'✧';position:absolute;top:22px;left:50%;transform:translateX(-50%);color:#bd96c8;font-size:1rem}
+.book-page:after{content:'❦';position:absolute;bottom:19px;left:50%;transform:translateX(-50%);color:#bd96c8}
+.page-kicker{font: .65rem Arial,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#9872a1;text-align:center;margin:8px 0 16px}
+.book-page h1{font-weight:normal;text-align:center;font-size:clamp(2rem,5vw,3.8rem);line-height:1.1;color:#684875;margin:0 0 13px}
+.book-page h2{font-weight:normal;text-align:center;font-style:italic;font-size:clamp(1rem,2.6vw,1.4rem);color:#a17ba5;margin:0 0 22px}
+.page-prose{max-width:610px;text-align:center;font-size:clamp(1rem,2.3vw,1.25rem);line-height:1.9;color:#644e68;white-space:normal}
+.storybook-art{font-size:clamp(2.8rem,7vw,5rem);color:#c49b75;text-shadow:0 3px 0 #f7e6c4,0 0 20px #d8b6e8;animation:float 4s infinite;margin-bottom:18px}
+.cover h1{font-size:clamp(3rem,8vw,6rem);animation:glow 5s infinite}
+.cover h2{font-size:clamp(1.2rem,3vw,1.8rem)}
+.cover-bottom{margin-top:28px;color:#a17ba5;font-style:italic}
+.chapter-divider,.final-stars{margin-top:30px;color:#b28cbb;letter-spacing:.4em;font-size:1.3rem}
+.photo-page{padding:clamp(18px,3vw,38px)}
+.photo-page:before{top:15px}
+.photo-page:after{bottom:12px}
+.photo-page .photo-page-layout{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(210px,.9fr);gap:clamp(20px,4vw,48px);align-items:center;width:100%;height:100%;padding:12px 10px}
+.memory-frame{margin:0;background:#fff;padding:10px 10px 18px;box-shadow:0 9px 24px #725b7044;transform:rotate(-1.2deg);max-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.memory-frame img{display:block;width:100%;height:min(48svh,480px);object-fit:contain;background:#f4edf1}
+.memory-frame.drawing img{height:min(42svh,360px)}
+.memory-frame figcaption{font-style:italic;color:#a17ba5;font-size:.85rem;padding-top:10px}
+.page-words{text-align:center;max-width:360px;margin:auto}
+.tiny-ornament{color:#b78dbf;letter-spacing:.3em;font-size:1.1rem;margin:12px}
+.photo-words{font-size:clamp(1.05rem,2.2vw,1.3rem);line-height:1.85;color:#654d69}
+.folio{position:absolute;bottom:22px;right:32px;color:#aa8bae;font: .7rem Arial,sans-serif}
+.reader-bottom{width:min(980px,100%);display:flex;justify-content:space-between;align-items:center;gap:12px;margin:17px auto 0}
+.reader-bottom .page-indicator{font: .72rem Arial,sans-serif;letter-spacing:.12em;color:#ddcce7}
+#progress{height:3px;width:min(980px,100%);background:#ffffff22;margin:12px auto 0;border-radius:9px;overflow:hidden}
+#progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#e9c7ef,#f4dda9);transition:width .4s}
+#toc{position:fixed;inset:0;background:#100b19dd;z-index:15;display:none;place-items:center;padding:20px}
+#toc.open{display:grid}
+.toc-card{width:min(520px,100%);max-height:80svh;overflow:auto;background:#fff8ed;color:#54385d;border-radius:18px;padding:26px;box-shadow:0 20px 60px #0009}
+.toc-card h2{font-weight:normal;text-align:center}
+.toc-list{display:grid;gap:8px}
+.toc-list button{border:1px solid #e2cce3;background:#fffdf7;color:#674d70;border-radius:10px;padding:12px;text-align:left}
+.toc-close{display:block;margin:18px auto 0;border:0;background:#76538a;color:white;border-radius:30px;padding:10px 20px}
+#sparkle{position:fixed;inset:0;z-index:8;pointer-events:none;display:none;place-items:center;color:#fff0bf;font-size:2.3rem;text-shadow:0 0 18px white,0 0 45px #e5b9ff}
+#sparkle.show{display:grid;animation:sparkle .75s ease-out}
+
+/* Interactive storybook moments */
+
+.clue-counter{color:#f1dca8!important;letter-spacing:.08em!important;text-transform:none!important;font-size:.72rem!important;white-space:nowrap}
+.key-clue-wrap{display:flex;flex-direction:column;align-items:center;gap:5px;margin:13px auto 4px;max-width:360px}
+.key-clue{border:1px solid #d9bb79;background:linear-gradient(145deg,#fff8e7,#f1dfb9);color:#96713d;border-radius:999px;padding:7px 13px;display:inline-flex;align-items:center;gap:8px;box-shadow:0 3px 12px #c6a36c33;transition:transform .25s,box-shadow .25s;font-size:.83rem}
+.key-clue:hover{transform:translateY(-2px);box-shadow:0 5px 18px #c6a36c66}
+.key-clue.found{background:linear-gradient(145deg,#fff2c9,#e9c77f);box-shadow:0 0 18px #e7c46c88}
+.key-clue .key-glyph{font-size:1.25rem}
+.clue-whisper{min-height:22px;text-align:center;color:#a27e55;font-style:italic;font-size:.82rem;line-height:1.45}
+.final-lock{margin:18px auto 4px;padding:18px;border:1px dashed #d7bd83;border-radius:16px;background:#fff8ed;color:#765b70;max-width:390px}
+.lock-icon{font-size:3.2rem;color:#b38b4c;text-shadow:0 0 16px #f2d78d;animation:float 3s infinite}
+.final-lock p{font-size:.98rem;line-height:1.5}
+.final-lock button{border:1px solid #d5b878;border-radius:999px;padding:11px 19px;background:linear-gradient(135deg,#f7e7b9,#d8b7e5);color:#503957}
+.final-lock.unlocked{border-style:solid;box-shadow:0 0 24px #e7cb8a88}
+@media(max-width:700px){.reader-top{flex-wrap:wrap}.clue-counter{order:3;width:100%;text-align:center}}
+
+/* Carta modal: sobre -> carta desplegada */
+.letter-modal[hidden]{display:none!important}
+.letter-modal{position:fixed;inset:0;z-index:60;display:grid;place-items:center;padding:18px;background:#21152bd9;backdrop-filter:blur(7px);animation:overlayIn .25s ease both}
+.letter-paper{position:relative;width:min(470px,100%);max-height:85svh;overflow:auto;padding:38px 28px 30px;text-align:center;background:linear-gradient(150deg,#fffdf5,#f8eaf1);border:1px solid #d9bd9c;border-radius:8px;color:#6e5472;box-shadow:0 20px 70px #0008,inset 0 0 0 6px #fff8ed}
+.letter-paper:before{content:' ';position:absolute;inset:12px;border:1px solid #ead8c4;pointer-events:none}
+.letter-paper h2{font-family:Georgia,serif;font-size:2rem;font-weight:normal;color:#815e88}
+.letter-paper p{position:relative;font-family:Georgia,serif;font-size:1.12rem;line-height:1.9}
+.letter-close{position:absolute;right:18px;top:15px;z-index:2;border:0;background:transparent;color:#8c6d91;font-size:2rem;line-height:1;cursor:pointer}
+.letter-seal{font-size:2.2rem;color:#b67da7;margin-bottom:8px}
+.envelope{cursor:pointer;touch-action:manipulation;z-index:5}
+.envelope:focus-visible{outline:3px solid #a77bb4;outline-offset:5px}
+.envelope.opened .envelope-flap{transform:rotateX(180deg)}
+
+.overlay-scene{position:fixed;inset:0;z-index:30;display:none;place-items:center;padding:20px;background:radial-gradient(ellipse at 50% 40%,#674a79ee,#171020f5 72%);backdrop-filter:blur(8px)}
+.overlay-scene.open{display:grid;animation:overlayIn .65s ease both}
+@keyframes overlayIn{from{opacity:0}to{opacity:1}}
+.dedication-card{width:min(540px,100%);max-height:88svh;overflow:auto;text-align:center;padding:clamp(26px,5vw,48px);border:1px solid #f0d9ac;border-radius:18px;background:linear-gradient(145deg,#fffaf0,#f5e5f0);color:#654b6a;box-shadow:0 20px 70px #05030c99,inset 0 0 0 7px #fff9f0}
+.dedication-flower{font-size:3.2rem;color:#b78bbd;text-shadow:0 0 22px #dcb8e9;animation:float 3s infinite}
+.dedication-card h2{font-size:clamp(2.5rem,8vw,4rem);font-weight:normal;color:#714b7e;margin:8px 0 18px}
+.dedication-card p{font-size:1.12rem;line-height:1.85}
+.dedication-card button{border:0;border-radius:999px;padding:13px 24px;background:linear-gradient(135deg,#76538a,#a77bb4);color:#fff8ff;box-shadow:0 6px 18px #674a7955;margin-top:12px}
+.signature{font-style:italic;color:#9b76a4}
+.secondary-action{background:transparent!important;border:1px solid #a77bb4!important;color:#76538a!important}
+.letter-row{display:flex;justify-content:center;gap:clamp(9px,2vw,18px);margin:20px 0 10px;flex-wrap:wrap}
+.envelope{position:relative;width:clamp(88px,18vw,130px);height:86px;border:1px solid #d7b9c9;border-radius:7px;background:linear-gradient(145deg,#f5dce9,#e9cfe4);box-shadow:0 6px 13px #71556d33;overflow:visible;transition:transform .25s}
+.envelope:hover{transform:translateY(-5px) rotate(-2deg)}
+.envelope:before,.envelope:after{content:'';position:absolute;bottom:0;width:0;height:0;border-style:solid;z-index:2}
+.envelope:before{left:0;border-width:0 0 55px 64px;border-color:transparent transparent #e5c4d8 transparent}
+.envelope:after{right:0;border-width:55px 0 0 64px;border-color:transparent transparent transparent #f0d5e4}
+.envelope-flap{position:absolute;top:0;left:0;width:0;height:0;border-left:64px solid transparent;border-right:64px solid transparent;border-top:48px solid #d6b2ce;transform-origin:top;transition:transform .55s;z-index:4}
+.envelope-stamp{position:absolute;z-index:5;top:29px;left:calc(50% - 12px);font-size:1.3rem;color:#fff7e9}
+.envelope-label{position:absolute;top:calc(100% + 8px);left:0;width:100%;font-size:.72rem;color:#795b7e}
+.envelope.opened .envelope-flap{transform:rotateX(180deg)}
+.envelope.opened{transform:translateY(-4px)}
+.letter-message{min-height:58px;max-width:440px;margin:18px auto 0;padding:12px 16px;border:1px dashed #caa9cf;border-radius:12px;background:#fffaf4;color:#705575;font-size:1rem;line-height:1.55}
+.flower-garden{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;margin:18px auto 8px}
+.touch-flower{border:0;background:transparent;color:#a777b2;font-size:2rem;filter:drop-shadow(0 2px 3px #b38cb455);transition:transform .25s;position:relative;padding:8px}
+.touch-flower:hover{transform:scale(1.12)}
+.touch-flower.bloomed{animation:bloom .65s ease both;color:#d58bb6}
+.touch-flower.bloomed:after{content:'✧';position:absolute;inset:-7px;color:#d6a9e4;font-size:1.2rem;animation:sparkle .8s ease-out}
+@keyframes bloom{0%{transform:scale(.6) rotate(-25deg)}65%{transform:scale(1.45) rotate(12deg)}100%{transform:scale(1.15)}}
+.flower-note{min-height:25px;font-style:italic;color:#9a77a1;font-size:.92rem;text-align:center}
+.surprise-message{margin-top:18px;padding:18px;border-radius:14px;background:#fff7ee;border:1px solid #e7cce4;animation:overlayIn .8s ease both}
+.surprise-message p{font-size:1.04rem}
+.big-heart{font-size:3.4rem;color:#bd7eaa;animation:float 2.5s infinite}
+
+@media(max-width:700px){
+ #reader{padding:16px 10px 24px;justify-content:flex-start}
+ .reader-top{margin-bottom:10px}
+ .book-shell{height:calc(100svh - 180px);min-height:590px;max-height:780px}
+ .book-shell:before{inset:0 0 0 50%}.book-shell:after{inset:0 50% 0 0}
+ .book-page{padding:28px 22px;border-radius:9px}
+ .photo-page .photo-page-layout{grid-template-columns:1fr;grid-template-rows:minmax(0,1fr) auto;gap:8px;padding:8px 2px 14px}
+ .memory-frame img{height:min(43svh,420px);max-height:420px}
+ .memory-frame.drawing img{height:min(33svh,300px)}
+ .memory-frame{max-width:min(100%,390px);width:100%;margin:auto;min-height:0;padding:7px 7px 12px}
+ .page-words{max-width:100%;padding:0 5px}
+ .photo-words{font-size:clamp(.96rem,3.7vw,1.12rem);line-height:1.55;margin:6px 0}
+ .tiny-ornament{margin:4px}
+ .reader-bottom{margin-top:10px}
+}
+@media(max-height:720px) and (min-width:701px){.book-shell{height:72svh;min-height:480px}.memory-frame img{height:42svh}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+
+.return-clues{display:inline-flex;align-items:center;justify-content:center;margin:14px auto 0;padding:11px 19px;border:1px solid #a98bb0!important;border-radius:999px;background:#fff9f2!important;color:#765b7c!important;font-size:.96rem;cursor:pointer;box-shadow:0 4px 12px #49344b18}
+.return-clues:hover{background:#f5eaf4!important;transform:translateY(-2px)}
+
+/* Legibilidad: páginas cómodas en pantallas de portátil y móvil */
+#reader{justify-content:flex-start;padding:18px 14px 24px}
+.reader-top{margin-bottom:12px}
+.book-shell{height:min(66svh,650px);min-height:490px}
+.book-page{overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;padding:clamp(28px,4vh,46px) clamp(24px,4.5vw,54px) 42px;scrollbar-width:thin;scrollbar-color:#d7bfd8 transparent}
+.book-page.active{justify-content:flex-start}
+.book-page h1{font-size:clamp(1.85rem,4.1vw,3.15rem);line-height:1.12;margin:4px 0 12px}
+.book-page h2{font-size:clamp(.98rem,2vw,1.28rem);line-height:1.4;margin:0 0 16px}
+.page-prose{font-size:clamp(.98rem,1.65vw,1.13rem);line-height:1.72;max-width:650px;margin:8px auto}
+.storybook-art{font-size:clamp(2.2rem,5vw,3.7rem);margin:4px 0 12px}
+.cover h1{font-size:clamp(2.5rem,5.8vw,4.65rem);line-height:1.08}
+.cover h2{font-size:clamp(1.05rem,2.4vw,1.5rem)}
+.cover-bottom{margin-top:14px}
+.chapter-divider,.final-stars{margin-top:16px}
+.photo-page{padding:clamp(20px,3vh,34px) clamp(18px,3vw,34px) 38px}
+.photo-page .photo-page-layout{min-height:100%;height:auto;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(14px,3vw,34px);padding:8px 6px}
+.memory-frame img{height:min(39svh,390px);max-height:390px}
+.memory-frame.drawing img{height:min(34svh,320px);max-height:320px}
+.page-words{max-width:390px;padding:8px 2px}
+.photo-words{font-size:clamp(.98rem,1.6vw,1.15rem);line-height:1.7}
+.reader-bottom{margin:12px auto 0}
+#progress{margin:9px auto 0}
+.folio{bottom:14px;right:22px}
+@media(max-height:760px) and (min-width:701px){
+ #reader{padding-top:10px;padding-bottom:14px}
+ .book-shell{height:62svh;min-height:440px}
+ .book-page{padding-top:26px;padding-bottom:36px}
+ .cover h1{font-size:clamp(2.25rem,5vw,4rem)}
+ .page-prose{line-height:1.6}
+ .memory-frame img{height:min(34svh,330px);max-height:330px}
+}
+@media(max-width:700px){
+ #reader{padding:12px 10px 22px}
+ .book-shell{height:68svh;min-height:480px}
+ .book-page{padding:32px 22px 42px}
+ .book-page.active{justify-content:flex-start}
+ .photo-page .photo-page-layout{display:flex;flex-direction:column;justify-content:flex-start;gap:14px}
+ .memory-frame{width:min(100%,390px);max-height:none}
+ .memory-frame img{height:min(34svh,310px);max-height:310px}
+ .memory-frame.drawing img{height:min(30svh,270px);max-height:270px}
+ .page-words{margin:0 auto}
+ .photo-words{font-size:1rem;line-height:1.6}
+}
+
+
+/* El final del cuento: acciones visibles y una despedida con atmósfera de cuento. */
+[hidden]{display:none!important}
+.ending-actions{display:flex;justify-content:center;align-items:center;flex-wrap:wrap;gap:12px;margin:24px auto 12px;width:100%;max-width:540px}
+.ending-actions .end-button{border-radius:999px;padding:12px 20px;min-height:46px;font-size:.98rem;line-height:1.25;transition:transform .2s,box-shadow .2s;cursor:pointer}
+.ending-actions .end-button:hover{transform:translateY(-3px)}
+.ending-actions .end-button:focus-visible{outline:3px solid #bd91c5;outline-offset:3px}
+.end-primary{border:1px solid #8f689d;background:linear-gradient(135deg,#73508b,#9b70ae);color:#fff9ff;box-shadow:0 5px 15px #6b4d7838}
+.end-outline{border:1px solid #b9a1be;background:#fffaf4;color:#775981;box-shadow:0 3px 10px #6b4d7817}
+.farewell-scene{z-index:45}
+.farewell-card{width:min(620px,100%);max-height:min(90svh,760px);padding:clamp(25px,4vw,44px)}
+.farewell-card h2{font-size:clamp(2.2rem,6vw,3.5rem);line-height:1.08}
+.farewell-card p{font-size:clamp(.98rem,1.6vw,1.1rem);line-height:1.65;margin:13px auto;max-width:490px}
+.farewell-card .ending-actions{margin:22px auto 4px}
+.farewell-card .end-button{margin:0;box-shadow:0 5px 15px #6b4d7830}
+.farewell-card .end-outline{background:#fffaf4!important;color:#775981!important;border:1px solid #b9a1be!important}
+.farewell-card .end-primary{background:linear-gradient(135deg,#73508b,#9b70ae)!important;color:#fff9ff!important;border:1px solid #8f689d!important}
+
+.farewell-lastline{font-family:Georgia,serif;font-style:italic;color:#80678c;font-size:clamp(1.02rem,1.8vw,1.2rem)!important;max-width:440px!important;margin:10px auto 14px!important}
+.farewell-hint{font-size:.84rem!important;color:#8b7b8c!important;max-width:420px!important;margin:12px auto 0!important}
+.farewell-actions{margin:16px auto 4px!important}
+.farewell-stars{color:#b78bbd;font-size:1.2rem;letter-spacing:.4em;margin:10px auto;animation:float 5s ease-in-out infinite}
+.farewell-card .secondary-action{margin-top:18px}
+@media(max-width:520px){
+ .ending-actions{gap:10px}
+ .ending-actions .end-button{width:100%;max-width:330px}
+ .farewell-card{padding:25px 19px}
+ .farewell-card .dedication-flower{font-size:2.2rem}
+ .farewell-card h2{margin:6px 0 12px}
+ .farewell-card p{line-height:1.55}
+}
+
+</style>
+</head>
+<body>
+<div id="sky"></div>
+<div id="entrance">
+ <div class="moon"></div><div class="castle-door"><div class="door left"></div><div class="door right"></div></div>
+ <div class="gate-copy">
+  <div class="crown">♕</div><small>Un reino secreto te espera</small>
+  <h1>Había una vez...<em>una princesa llamada Gaby</em></h1>
+  <p>Más allá de estas puertas hay un libro escrito con cariño. Cada página guarda una palabra bonita, un recuerdo y un pedacito de este pequeño universo.</p>
+  <button id="enter">Abrir mi cuento ✧</button>
+ </div>
+</div>
+
+<div id="dedicationReveal" class="overlay-scene" aria-hidden="true">
+ <div class="dedication-card">
+  <div class="dedication-flower">❀</div>
+  <div class="page-kicker">Antes de comenzar</div>
+  <h2>Para Gaby</h2>
+  <p>Que al abrir estas páginas recuerdes lo querida, valiosa y extraordinaria que eres. Este pequeño universo lleva tu nombre y está hecho para celebrar tu historia, sin prisas y con mucho cariño.</p>
+  <p class="signature">Con todo mi cariño · ♡</p>
+  <button id="beginBook">Entrar a mi cuento ✧</button>
+ </div>
+</div>
+<main id="reader" aria-label="Libro de la princesa Gaby">
+ <div class="reader-top"><span>✧ El libro de la princesa Gaby ✧</span><span id="clueCounter" class="clue-counter" aria-live="polite">✧ 0 / 4 destellos</span><button id="contents">Índice del cuento</button></div>
+ <div class="book-shell" id="bookShell"><article class="book-page cover" data-page="0" aria-label="Página 1">
+        <div class="storybook-art">♕</div>
+        <div class="page-kicker">Prólogo</div>
+        <h1>La princesa y el jardín que había olvidado florecer</h1>
+        <h2>Un cuento para Gaby</h2>
+        <p class="page-prose">Había una vez, más allá de los caminos que aparecen en los mapas, un reino escondido entre montañas de lavanda y cielos color violeta. Allí vivía una princesa llamada Gaby. No era un reino de riquezas ni de grandes ejércitos: su magia vivía en los pequeños detalles, en las risas inesperadas y en todo aquello que hacía único su corazón.</p>
+        <div class="cover-bottom">Un cuento escrito con cariño · ♡</div><span class="folio">1</span></article>
+<article class="book-page text" data-page="1" aria-label="Página 2">
+        <div class="storybook-art">✧</div>
+        <div class="page-kicker">Una dedicatoria</div>
+        <h1>La carta que llegó con el viento</h1>
+        <h2>Un mensaje que encontró el camino hasta el castillo</h2>
+        <p class="page-prose">Una mañana, una carta aterrizó sobre el alféizar de su ventana. No llevaba remitente, solo una frase: «Hay un jardín que espera por ti». En una esquina, casi escondido bajo la cera violeta, había dibujada una diminuta llave dorada. Gaby la guardó cerca del corazón junto con la carta. No sabía qué encontraría al final del camino, pero algo en aquellas palabras la invitó a abrir la puerta.</p>
+        <div class="chapter-divider">❦ ✧ ❦</div>
+        <span class="folio">2</span></article>
+<article class="book-page chapter" data-page="2" aria-label="Página 3">
+        <div class="storybook-art">❀</div>
+        <div class="page-kicker">Capítulo I</div>
+        <h1>El jardín de las pequeñas luces</h1>
+        <h2>La primera pista estaba escondida entre las flores</h2>
+        <p class="page-prose">Al otro lado del bosque, Gaby encontró un jardín dormido. Las flores tenían los pétalos cerrados y el sendero parecía esperar una señal. Una pequeña hada le explicó que cada flor despertaba cuando alguien recordaba una cosa bonita. La princesa se acercó a la primera y, al tocarla, una luz tibia iluminó el camino. Entre sus pétalos apareció por un instante el mismo destello dorado que había visto en la carta.</p>
+        <span class="folio">3</span></article>
+<article class="book-page photo" data-page="3" aria-label="Página 4">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_01.jpg" alt="Fotografía de Gaby, página 1" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">El sendero se abrió bajo sus pies. A cada paso, el jardín parecía reconocerla, como si hubiera estado guardando aquel camino desde hacía muchísimo tiempo.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">4</span></article>
+<article class="book-page photo" data-page="4" aria-label="Página 5">
+        <div class="photo-page-layout">
+          <figure class="memory-frame drawing">
+            <img src="assets/foto_02.jpg" alt="Fotografía de Gaby, página 2" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">En una fuente de agua clara, la princesa vio reflejadas muchas versiones de sí misma. Comprendió que todas merecían ternura: la que reía, la que soñaba y también la que necesitaba descansar.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">5</span></article>
+<article class="book-page photo" data-page="5" aria-label="Página 6">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_03.jpg" alt="Fotografía de Gaby, página 3" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Unas luciérnagas la acompañaron hasta un puente de piedra. No le pidieron que fuera valiente; simplemente caminaron a su lado mientras ella encontraba su propio ritmo.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">6</span></article>
+<article class="book-page photo" data-page="6" aria-label="Página 7">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_04.jpg" alt="Fotografía de Gaby, página 4" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Al cruzar el puente, escuchó una melodía suave entre los árboles. Era el bosque diciéndole que no todas las cosas hermosas hacen ruido para hacerse notar.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">7</span></article>
+<article class="book-page photo" data-page="7" aria-label="Página 8">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_05.jpg" alt="Fotografía de Gaby, página 5" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Más adelante encontró un pequeño claro lleno de flores blancas. Allí descubrió que la belleza no necesitaba compararse con ninguna otra para ser verdadera.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">8</span></article>
+<article class="book-page photo" data-page="8" aria-label="Página 9">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_06.jpg" alt="Fotografía de Gaby, página 6" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">El camino subía hacia una colina. Hubo un momento en que pareció demasiado largo, así que Gaby se detuvo. El cielo no se enfadó por esperarla; el mundo también sabe tener paciencia.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">9</span></article>
+<article class="book-page photo" data-page="9" aria-label="Página 10">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_07.jpg" alt="Fotografía de Gaby, página 7" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">En la cima había una ventana antigua que mostraba recuerdos luminosos. La princesa sonrió: incluso los instantes sencillos pueden convertirse en tesoros cuando se guardan con cariño.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">10</span></article>
+<article class="book-page photo" data-page="10" aria-label="Página 11">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_08.jpg" alt="Fotografía de Gaby, página 8" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Una mariposa se posó cerca de ella y siguió volando. Gaby entendió que algunas cosas llegan para acompañarnos un tramo, y aun así dejan algo bonito en el corazón.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">11</span></article>
+<article class="book-page photo" data-page="11" aria-label="Página 12">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_09.jpg" alt="Fotografía de Gaby, página 9" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">El bosque se volvió más silencioso. Por primera vez, la princesa no sintió que debía llenar el silencio. Respiró hondo y dejó que la calma también formara parte de la aventura.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">12</span></article>
+<article class="book-page photo" data-page="12" aria-label="Página 13">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_10.jpg" alt="Fotografía de Gaby, página 10" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Encontró una pequeña biblioteca bajo un árbol. En sus estantes no había historias de princesas perfectas, sino relatos de personas que habían aprendido a seguir adelante siendo ellas mismas.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">13</span></article>
+<article class="book-page photo" data-page="13" aria-label="Página 14">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_11.jpg" alt="Fotografía de Gaby, página 11" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">En una página leyó que nadie florece todos los días. Hay temporadas para crecer, otras para recuperar fuerzas y otras para descubrir que descansar también es parte del viaje.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">14</span></article>
+<article class="book-page photo" data-page="14" aria-label="Página 15">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_12.jpg" alt="Fotografía de Gaby, página 12" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Al cerrar el libro, una brisa movió las hojas y dejó caer una estrella de papel. Tenía escrito: «No tienes que demostrar tu valor. Ya lo llevas contigo». En el reverso alguien había dibujado una cerradura diminuta, rodeada de cuatro estrellas.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">15</span></article>
+<article class="book-page photo" data-page="15" aria-label="Página 16">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_13.jpg" alt="Fotografía de Gaby, página 13" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">La princesa continuó hasta un lago violeta. En el agua danzaban reflejos de momentos felices, pequeñas aventuras y gestos que quizá parecían insignificantes, pero que habían hecho más bonito el camino.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">16</span></article>
+<article class="book-page photo" data-page="16" aria-label="Página 17">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_14.jpg" alt="Fotografía de Gaby, página 14" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">En la orilla había dos piedras formando un corazón. Gaby las acomodó con cuidado y pensó que algunas cosas se construyen así: con paciencia, presencia y detalles pequeños.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">17</span></article>
+<article class="book-page photo" data-page="17" aria-label="Página 18">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_15.jpg" alt="Fotografía de Gaby, página 15" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">El sendero se llenó de pétalos. No anunciaban el final de la aventura, sino que el jardín estaba despertando poco a poco, flor por flor, como sucede con todo lo que merece tiempo.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">18</span></article>
+<article class="book-page photo" data-page="18" aria-label="Página 19">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_16.jpg" alt="Fotografía de Gaby, página 16" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Al caer la tarde, la princesa descubrió que la corona no pesaba por estar hecha de oro, sino por todo lo que había aprendido a reconocer en sí misma: sensibilidad, esperanza y una fuerza que también sabía descansar.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">19</span></article>
+<article class="book-page photo" data-page="19" aria-label="Página 20">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_17.jpg" alt="Fotografía de Gaby, página 17" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Una última luciérnaga la condujo hasta una colina desde donde se veía el reino entero. Gaby comprendió que el lugar mágico no estaba lejos: también vivía en su manera de mirar el mundo.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">20</span></article>
+<article class="book-page photo" data-page="20" aria-label="Página 21">
+        <div class="photo-page-layout">
+          <figure class="memory-frame portrait">
+            <img src="assets/foto_18.jpg" alt="Fotografía de Gaby, página 18" loading="lazy">
+            <figcaption>Un recuerdo para guardar</figcaption>
+          </figure>
+          <div class="page-words">
+            <div class="tiny-ornament">✧ ❦ ✧</div>
+            <p class="photo-words">Y cuando el primer lucero apareció, el jardín floreció por completo. No porque la princesa hubiera vencido a nadie, sino porque había recorrido el camino siendo ella misma.</p>
+            <div class="tiny-ornament">♡</div>
+          </div>
+        </div><span class="folio">21</span></article>
+<article class="book-page chapter" data-page="21" aria-label="Página 22">
+        <div class="storybook-art">✦</div>
+        <div class="page-kicker">Capítulo II</div>
+        <h1>El mapa de las estrellas</h1>
+        <h2>La siguiente pista estaba escrita en el cielo</h2>
+        <p class="page-prose">La carta le había hablado de cinco estrellas que señalaban el camino de regreso. Gaby levantó la mirada y las encontró brillando sobre el reino. Algunas eran intensas; otras apenas un destello. Al unirlas con la mirada, Gaby distinguió la silueta de una llave. Entonces recordó el dibujo de la carta: quizá las estrellas no señalaban el camino de regreso, sino el lugar al que debía llegar. Todas pertenecían al mismo cielo, y la princesa también tenía allí su lugar.</p>
+        <span class="folio">22</span></article>
+<article class="book-page chapter" data-page="22" aria-label="Página 23">
+        <div class="storybook-art">♡</div>
+        <div class="page-kicker">Capítulo III</div>
+        <h1>El rincón donde viven los recuerdos</h1>
+        <h2>Antes de volver al castillo, quedaba un último regalo</h2>
+        <p class="page-prose">Al pie de la colina encontró una mesa pequeña, iluminada por luciérnagas. Sobre ella descansaban tres sobres. «Son palabras para llevar contigo», susurró el hada. «Abre el que necesites hoy; los demás estarán aquí cuando quieras volver». Antes de marcharse, el hada dejó sobre la mesa una última pista: «La llave no abre una puerta del castillo. Abre aquello que has ido descubriendo de ti misma».</p>
+        <div class="letter-row">
+          <button class="envelope" data-letter="0" aria-label="Abrir carta para un día bonito"><span class="envelope-stamp">♡</span><span class="envelope-flap"></span><span class="envelope-label">Para un día bonito</span></button>
+          <button class="envelope" data-letter="1" aria-label="Abrir carta para cuando dudes"><span class="envelope-stamp">✧</span><span class="envelope-flap"></span><span class="envelope-label">Para cuando dudes</span></button>
+          <button class="envelope" data-letter="2" aria-label="Abrir carta para recordarte cuánto vales"><span class="envelope-stamp">❀</span><span class="envelope-flap"></span><span class="envelope-label">Solo porque sí</span></button>
+        </div>
+        <div id="letterMessage" class="letter-message" aria-live="polite">Toca un sobre para abrir tu carta sorpresa.</div>
+        <div id="letterModal" class="letter-modal" role="dialog" aria-modal="true" aria-labelledby="letterTitle" hidden>
+          <div class="letter-paper">
+            <button type="button" id="closeLetter" class="letter-close" aria-label="Cerrar carta">×</button>
+            <div class="letter-seal">♡</div>
+            <div class="page-kicker">Una carta para ti</div>
+            <h2 id="letterTitle">Querida Gaby</h2>
+            <p id="letterBody"></p>
+            <div class="signature">Con cariño, siempre ♡</div>
+          </div>
+        </div>
+        <span class="folio">23</span></article>
+<article class="book-page chapter" data-page="23" aria-label="Página 24">
+        <div class="storybook-art">☾</div>
+        <div class="page-kicker">Capítulo IV</div>
+        <h1>La noche también forma parte del cuento</h1>
+        <h2>La princesa aprendió que descansar también es valentía</h2>
+        <p class="page-prose">No todos los días del reino eran luminosos. A veces el camino exigía cuidados, paciencia y más energía de la que Gaby sentía tener. Entonces recordó algo importante: no tenía que poder con todo, ni convertir cada día en una hazaña. Podía detenerse, pedir compañía y cuidarse con ternura. La diabetes formaba parte de su camino, pero nunca sería toda su historia. Su vida era mucho más grande que cualquier dificultad. Y entonces comprendió la última pista: la llave no había estado buscando una cerradura fuera de ella. El jardín entero había despertado cada vez que Gaby se permitía reconocerse con cariño.</p>
+        <span class="folio">24</span></article>
+<article class="book-page final" data-page="24" aria-label="Página 25">
+        <div class="storybook-art">✿</div>
+        <div class="page-kicker">Epílogo</div>
+        <h1>Y el cuento apenas comenzaba</h1>
+        <h2>El jardín guardó una última sorpresa para su princesa</h2>
+        <p class="page-prose">Cuando Gaby regresó al castillo, descubrió que el jardín había florecido detrás de ella y que las estrellas seguían señalando nuevos caminos. No había encontrado una vida sin días difíciles; había encontrado algo mejor: la certeza de que podía avanzar a su manera, rodeada de cariño y sin dejar de ser ella.<br><br>Y si alguna vez vuelve a perder el camino, las flores, las cartas y aquel cielo violeta sabrán recordarle que siempre puede comenzar una página nueva. En el centro del jardín apareció una pequeña puerta de luz. Gaby acercó la llave dorada y descubrió que no había un tesoro detrás, sino un espejo que reflejaba todo lo que ella ya era: una persona valiosa, querida y llena de posibilidades.<br><br>Con mucho cariño. ♡</p>
+        <div class="final-stars">✦　✧　♡　✧　✦</div>
+        <div class="ending-actions" aria-label="Opciones al terminar el cuento">
+          <button type="button" id="epilogueReread" class="end-button end-outline">↶ Volver a leer</button>
+          <button type="button" id="epilogueFinish" class="end-button end-primary">Cerrar el cuento ✧</button>
+        </div><span class="folio">25</span></article></div>
+ <div class="reader-bottom">
+  <button id="previous">← Anterior</button><span class="page-indicator" id="pageIndicator">Página 1 de 25</span><button id="next">Siguiente →</button>
+ </div>
+ <div id="progress"><span></span></div>
+</main>
+
+<div id="lastSurprise" class="overlay-scene" aria-hidden="true">
+ <div class="dedication-card surprise-card">
+  <div class="dedication-flower">✦ ♡ ✦</div>
+  <div class="page-kicker">Un último secreto</div>
+  <h2>Una sorpresa para la princesa</h2>
+  <p>Durante el viaje encontraste pequeños destellos. ¿Recuerdas la llave que apareció en la primera carta? Si reuniste las cuatro pistas, podrás descubrir qué ha estado guardando el jardín.</p>
+  <div class="final-lock" aria-live="polite"><div id="lockIcon" class="lock-icon">♙</div><p id="lockStatus">La cerradura espera los cuatro destellos.</p><button id="unlockTreasure">Probar la llave dorada ✨</button></div>
+  <button id="returnToClues" class="secondary-action return-clues">↶ Volver al cuento y buscar pistas</button>
+  <div id="surpriseMessage" class="surprise-message" hidden>
+   <div class="big-heart">♡</div>
+   <div class="page-kicker">Lo que guardaba el jardín</div>
+   <h2>El tesoro eras tú, princesa</h2>
+   <p>La puerta se abrió sin hacer ruido. Detrás no había cofres ni montañas de oro: había un espejo rodeado de flores. En él, Gaby pudo ver todo lo que el viaje le había recordado: su ternura, su manera de iluminar los días, su fuerza incluso cuando necesita descansar y esa forma tan suya de hacer especial lo cotidiano.</p>
+   <p>La llave nunca quiso enseñarle que debía convertirse en alguien diferente. Solo quería ayudarla a descubrir que muchas de las cosas más valiosas que buscaba ya vivían dentro de ella.</p>
+   <p>Que nunca te falten motivos para creer en ti, personas que cuiden tu corazón y sueños que te hagan despertar con ilusión. Y cuando el mundo parezca enorme, recuerda: no tienes que recorrerlo todo hoy. Un pasito a la vez también es avanzar.</p>
+   <p class="signature">Tu cuento sigue. Y todavía guarda muchísimas páginas hermosas.</p>
+   <div class="final-stars">✦　✧　❀　♡　✧　✦</div>
+  </div>
+  <div id="treasureEndActions" class="ending-actions" hidden>
+    <button type="button" id="treasureReread" class="end-button end-outline">↶ Volver a leer</button>
+    <button type="button" id="treasureFinish" class="end-button end-primary">Cerrar el cuento ✧</button>
+  </div>
+  <button id="closeSurprise" class="secondary-action" hidden>Volver al epílogo</button>
+ </div>
+</div>
+<div id="farewellScene" class="overlay-scene farewell-scene" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="farewellTitle">
+ <div class="dedication-card farewell-card">
+  <div class="farewell-stars" aria-hidden="true">✧　✦　✧</div>
+  <div class="dedication-flower" aria-hidden="true">❀</div>
+  <div class="page-kicker">La última página</div>
+  <h2 id="farewellTitle">Fin... por ahora.</h2>
+  <p>Y cuando la princesa Gaby cerró el libro, el jardín no se apagó. Sus flores siguieron creciendo en silencio, esperando las nuevas historias que aún estaban por llegar.</p>
+  <p>Porque hay cuentos que terminan en una página, pero el cariño con el que fueron escritos permanece mucho después.</p>
+  <p class="signature">Gracias por existir y por ser tú. ♡</p>
+  <div class="farewell-stars" aria-hidden="true">✧　❀　♡　❀　✧</div>
+  <p class="farewell-lastline">Y colorín, colorado… este pequeño cuento queda guardado en un lugar bonito de tu corazón.</p>
+  <div class="ending-actions farewell-actions">
+   <button type="button" id="farewellReread" class="end-button end-outline">↶ Volver a leer</button>
+  </div>
+  <p class="farewell-hint">Cuando quieras, puedes cerrar esta pestaña. Las historias bonitas siempre pueden volver a abrirse. ♡</p>
+ </div>
+</div>
+<div id="sparkle" aria-hidden="true">✧　♡　✧</div>
+<div id="toc" role="dialog" aria-modal="true" aria-label="Índice del cuento"><div class="toc-card"><h2>Índice de este pequeño cuento</h2><div class="toc-list" id="tocList"></div><button class="toc-close" id="closeToc">Volver al libro</button></div></div>
+<script>
+const pages=[...document.querySelectorAll('.book-page')];
+let current=0,busy=false;
+const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+let surpriseShown=false;
+let surpriseTimer=null;
+function hideSurprise(){
+ clearTimeout(surpriseTimer);
+ const overlay=document.getElementById('lastSurprise');
+ overlay.classList.remove('open');overlay.setAttribute('aria-hidden','true');
+ surpriseShown=false;
+}
+function showFinalSurprise(){
+ if(surpriseShown)return;
+ surpriseShown=true;
+ surpriseTimer=setTimeout(()=>{
+  if(current!==pages.length-1 || document.getElementById('farewellScene').classList.contains('open'))return;
+  const overlay=document.getElementById('lastSurprise');
+  overlay.classList.add('open');overlay.setAttribute('aria-hidden','false');
+ },reduced?50:650);
+}
+function showFarewell(){
+ hideSurprise();
+ const scene=document.getElementById('farewellScene');
+ scene.classList.add('open');scene.setAttribute('aria-hidden','false');
+ scene.querySelector('.farewell-card').scrollTop=0;
+ document.getElementById('farewellTitle').focus?.();
+}
+function hideFarewell(){
+ const scene=document.getElementById('farewellScene');
+ scene.classList.remove('open');scene.setAttribute('aria-hidden','true');
+}
+function rereadBook(){
+ // Volver a abrir el castillo, la dedicatoria y todas las páginas desde cero.
+ window.location.reload();
+}
+function showPage(index,dir='next'){
+ if(busy||index<0||index>=pages.length||index===current)return;
+ busy=true;
+ const old=pages[current],next=pages[index];
+ old.classList.add('turning');
+ document.getElementById('sparkle').classList.add('show');
+ setTimeout(()=>{
+  old.classList.remove('active','turning');
+  current=index;next.classList.add('active');
+  document.getElementById('pageIndicator').textContent=`Página ${current+1} de ${pages.length}`;
+  document.querySelector('#progress span').style.width=((current+1)/pages.length*100)+'%';
+  if(next.classList.contains('final'))showFinalSurprise();
+ },reduced?0:260);
+ setTimeout(()=>{document.getElementById('sparkle').classList.remove('show');busy=false},reduced?20:760);
+}
+document.getElementById('previous').addEventListener('click',()=>showPage(current-1,'prev'));
+document.getElementById('next').addEventListener('click',()=>showPage(current+1,'next'));
+document.addEventListener('keydown',e=>{
+ if(document.getElementById('toc').classList.contains('open')){if(e.key==='Escape')closeToc();return}
+ if(e.key==='ArrowRight'||e.key==='PageDown')showPage(current+1,'next');
+ if(e.key==='ArrowLeft'||e.key==='PageUp')showPage(current-1,'prev');
+});
+let touchX=0;
+document.getElementById('bookShell').addEventListener('touchstart',e=>{touchX=e.changedTouches[0].screenX},{passive:true});
+document.getElementById('bookShell').addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-touchX;if(Math.abs(dx)>55)showPage(current+(dx<0?1:-1),dx<0?'next':'prev')},{passive:true});
+function closeToc(){document.getElementById('toc').classList.remove('open')}
+document.getElementById('contents').addEventListener('click',()=>document.getElementById('toc').classList.add('open'));
+document.getElementById('closeToc').addEventListener('click',closeToc);
+const toc=document.getElementById('tocList');
+pages.forEach((p,i)=>{
+ const title=p.querySelector('h1')?.textContent||p.querySelector('.photo-words')?.textContent.slice(0,45)||'Página';
+ const chapter=p.querySelector('.page-kicker')?.textContent|| (p.classList.contains('photo')?'Galería de recuerdos':'El cuento');
+ if(p.classList.contains('photo') && i>0 && pages[i-1].classList.contains('photo'))return;
+ const b=document.createElement('button');b.textContent=chapter+' — '+title;
+ b.addEventListener('click',()=>{closeToc();if(i===current)return;showPage(i)});toc.appendChild(b);
+});
+document.getElementById('enter').addEventListener('click',()=>{
+ const entrance=document.getElementById('entrance');entrance.classList.add('opening');
+ setTimeout(()=>{
+  entrance.classList.add('hide');
+  const dedication=document.getElementById('dedicationReveal');
+  dedication.classList.add('open');dedication.setAttribute('aria-hidden','false');
+ },1000);
+});
+document.getElementById('beginBook').addEventListener('click',()=>{
+ const dedication=document.getElementById('dedicationReveal');
+ dedication.classList.remove('open');dedication.setAttribute('aria-hidden','true');
+ document.getElementById('reader').classList.add('ready');document.body.style.overflow='auto';
+ pages[0].classList.add('active');document.querySelector('#progress span').style.width=(1/pages.length*100)+'%';
+});
+
+
+// El misterio de la llave: cuatro destellos escondidos a lo largo del cuento.
+const clueData=[
+ {page:1, title:'La marca en la carta', hint:'La primera pista: la llave no es de hierro. Está hecha de algo que el cariño puede reconocer.'},
+ {page:2, title:'El brillo entre los pétalos', hint:'La segunda pista: el jardín no se abre con fuerza, sino cuando alguien se permite ver lo bonito que ya existe.'},
+ {page:12, title:'La estrella de papel', hint:'La tercera pista: mira el cielo con calma. Cuatro destellos pueden dibujar algo que parecía perdido.'},
+ {page:21, title:'La constelación escondida', hint:'La cuarta pista: la llave no busca una puerta cualquiera. Busca el lugar donde Gaby guarda lo que la hace ser ella.'}
+];
+const foundClues=new Set();
+function updateClueCounter(){
+ const counter=document.getElementById('clueCounter');
+ if(counter)counter.textContent=`✧ ${foundClues.size} / 4 destellos`;
+ const status=document.getElementById('lockStatus');
+ if(status && !document.getElementById('surpriseMessage').hidden){return}
+ if(status)status.textContent=foundClues.size===4?'Los cuatro destellos están reunidos. La llave ya puede girar.':`La cerradura espera los cuatro destellos. Has encontrado ${foundClues.size} de 4.`;
+}
+clueData.forEach((clue,index)=>{
+ const page=pages[clue.page];if(!page)return;
+ const wrap=document.createElement('div');wrap.className='key-clue-wrap';
+ const button=document.createElement('button');button.type='button';button.className='key-clue';button.innerHTML='<span class="key-glyph">⚿</span><span>Un destello dorado</span>';
+ button.setAttribute('aria-label','Investigar una pista de la llave dorada');
+ const whisper=document.createElement('div');whisper.className='clue-whisper';whisper.textContent='Algo brilla aquí...';
+ button.addEventListener('click',()=>{
+  foundClues.add(index);button.classList.add('found');button.innerHTML='<span class="key-glyph">✧</span><span>Destello encontrado</span>';
+  whisper.textContent=clue.hint;button.disabled=true;updateClueCounter();
+ });
+ wrap.append(button,whisper);
+ const target=page.querySelector('.page-prose')||page.querySelector('.photo-words');
+ if(target)target.insertAdjacentElement('afterend',wrap);
+});
+updateClueCounter();
+
+// Flores interactivas: al tocarlas florecen y dejan un deseo breve.
+const flowerWishes=['Que hoy encuentres una razón para sonreír.','Que tus sueños sigan creciendo a tu ritmo.','Que nunca te falte un poquito de paz.','Que recuerdes lo valiosa que eres.'];
+pages.forEach((page,idx)=>{
+ if(page.classList.contains('chapter') && [2,21,22,23].includes(idx)){
+  const garden=document.createElement('div');garden.className='flower-garden';
+  const note=document.createElement('div');note.className='flower-note';note.textContent='Toca una flor y descubre un deseo.';
+  for(let j=0;j<3;j++){
+   const flower=document.createElement('button');flower.className='touch-flower';flower.type='button';flower.textContent=['✿','❀','✾'][j];flower.setAttribute('aria-label','Hacer florecer una flor');
+   flower.addEventListener('click',()=>{
+    flower.classList.add('bloomed');
+    note.textContent=flowerWishes[(idx+j)%flowerWishes.length];
+   });
+   garden.appendChild(flower);
+  }
+  const prose=page.querySelector('.page-prose');
+  if(prose)prose.insertAdjacentElement('afterend',garden);
+  garden.insertAdjacentElement('afterend',note);
+ }
+});
+const letterTexts=[
+ 'Ojalá hoy te pasen cosas bonitas, incluso las pequeñitas. Que encuentres motivos para reír y un momento para disfrutar sin pensar en todo lo demás. Que esta carta sea una pausa suave en medio de tu día.',
+ 'Cuando dudes de ti, recuerda que un día difícil no define tu historia. No tienes que ser perfecta ni tener todas las respuestas. Eres valiosa tal como eres, incluso cuando necesitas descansar.',
+ 'Esta carta no necesita una fecha especial: solo quería recordarte que mereces cariño, tranquilidad, respeto y muchísimas razones para sentirte feliz. Me alegra que existas y que el mundo tenga a alguien como tú.'
+];
+const letterRow=document.querySelector('.letter-row');
+if(letterRow){
+ letterRow.addEventListener('click',event=>{
+  const button=event.target.closest('button.envelope');
+  if(!button)return;
+  letterRow.querySelectorAll('.envelope').forEach(e=>e.classList.remove('opened'));
+  button.classList.add('opened');
+  const modal=document.getElementById('letterModal');
+  document.getElementById('letterBody').textContent=letterTexts[Number(button.dataset.letter)];
+  modal.hidden=false;
+  document.getElementById('closeLetter').focus();
+ });
+}
+function closeLetterModal(){const modal=document.getElementById('letterModal');if(modal)modal.hidden=true}
+document.getElementById('closeLetter').addEventListener('click',closeLetterModal);
+document.getElementById('letterModal').addEventListener('click',event=>{if(event.target.id==='letterModal')closeLetterModal()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape')closeLetterModal()});
+document.getElementById('returnToClues').addEventListener('click',()=>{
+ hideSurprise();
+ showPage(0,'prev');
+});
+document.getElementById('unlockTreasure').addEventListener('click',()=>{
+ const lock=document.querySelector('.final-lock');
+ if(foundClues.size<4){
+  document.getElementById('lockStatus').textContent=`La llave todavía no gira... faltan ${4-foundClues.size} destello(s). Vuelve a recorrer el cuento y busca los pequeños brillos dorados.`;
+  lock.classList.remove('unlocked');
+  return;
+ }
+ lock.classList.add('unlocked');
+ document.getElementById('lockIcon').textContent='⚿';
+ document.getElementById('lockStatus').textContent='La llave encajó. El jardín ha reconocido a su princesa.';
+ document.getElementById('unlockTreasure').hidden=true;
+ document.getElementById('surpriseMessage').hidden=false;
+ document.getElementById('closeSurprise').hidden=false;
+ document.getElementById('returnToClues').hidden=true;
+ document.getElementById('treasureEndActions').hidden=false;
+});
+document.getElementById('closeSurprise').addEventListener('click',hideSurprise);
+document.getElementById('epilogueReread').addEventListener('click',rereadBook);
+document.getElementById('epilogueFinish').addEventListener('click',showFarewell);
+document.getElementById('treasureReread').addEventListener('click',rereadBook);
+document.getElementById('treasureFinish').addEventListener('click',showFarewell);
+document.getElementById('farewellReread').addEventListener('click',rereadBook);
+for(let i=0;i<75;i++){const s=document.createElement('i');s.className='star';s.style.left=Math.random()*100+'%';s.style.top=Math.random()*100+'%';s.style.animationDelay=Math.random()*4+'s';document.getElementById('sky').appendChild(s)}
+for(let i=0;i<13;i++){const p=document.createElement('i');p.className='petal';p.style.left=Math.random()*100+'%';p.style.animationDuration=(14+Math.random()*16)+'s';p.style.animationDelay=(-Math.random()*24)+'s';document.getElementById('sky').appendChild(p)}
+</script>
+</body>
+</html>
